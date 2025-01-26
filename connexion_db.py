@@ -16,7 +16,7 @@ def get_db():
             cursorclass=pymysql.cursors.DictCursor
         )
         # à activer sur les machines personnelles :
-        activate_db_options(db)
+#        activate_db_options(db)
     return db
 
 def activate_db_options(db):

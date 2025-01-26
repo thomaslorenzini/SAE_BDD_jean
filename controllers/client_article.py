@@ -21,11 +21,12 @@ def client_article_show():                                 # remplace client_ind
             a.prix_jean AS prix,
             a.image AS image,
             a.matiere AS matiere,
+            a.stock AS stock,
             a.couleur AS couleur,
             a.descripton AS description,
             a.fournisseur AS fournisseur,
             a.marque AS marque,
-            t.nom_taille AS taille,
+            t.nom_taille AS type_article_id,
             c.nom_coupe AS coupe,
             e.libelle AS etat
         FROM jean a
@@ -34,14 +35,13 @@ def client_article_show():                                 # remplace client_ind
         JOIN ligne_commande lc ON a.id_jean = lc.id_jean
         JOIN commande cmd ON lc.id_commande = cmd.id_commande
         JOIN etat e ON cmd.id_etat = e.id_etat
-        WHERE cmd.id_utilisateur = %s
         '''
     list_param = []
     condition_and = ""
     # utilisation du filtre
     sql3=''' prise en compte des commentaires et des notes dans le SQL    '''
     articles =[]
-    mycursor.execute(sql, (id_client,))  # Exécution de la requête avec l'ID utilisateur
+    mycursor.execute(sql)
     articles = mycursor.fetchall()
 
 

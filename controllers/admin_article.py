@@ -19,22 +19,21 @@ def show_article():
     mycursor = get_db().cursor()
     sql = '''
             SELECT 
-                a.id_jean AS article_id,
+                a.id_jean AS id_article,
                 a.nom_jean AS nom,
                 a.prix_jean AS prix,
                 a.image AS image,
-                a.matiere AS matiere,
+                a.stock AS stock,
                 a.couleur AS couleur,
                 a.descripton AS description,
                 a.fournisseur AS fournisseur,
                 a.marque AS marque,
-                t.nom_taille AS taille,
+                t.nom_taille AS type_article_id,
                 c.nom_coupe AS coupe,
                 e.libelle AS etat,
-                -- Ajout des informations du stock, commentaires et déclinaisons
-                (SELECT COUNT(*) FROM ligne_panier lp WHERE lp.id_jean = a.id_jean) AS nb_panier,  -- Nombre dans le panier de l'utilisateur
-                (SELECT COUNT(*) FROM ligne_commande lc WHERE lc.id_jean = a.id_jean) AS nb_commandes, -- Nombre de fois que l'article a été commandé
-                (SELECT COUNT(*) FROM ligne_commande lc WHERE lc.id_jean = a.id_jean AND lc.quantite_commande > 0) AS nb_commandes_valides -- Nombre de commandes validées (quantité > 0)
+                (SELECT COUNT(*) FROM ligne_panier lp WHERE lp.id_jean = a.id_jean) AS nb_panier,  
+                (SELECT COUNT(*) FROM ligne_commande lc WHERE lc.id_jean = a.id_jean) AS nb_commandes,
+                (SELECT COUNT(*) FROM ligne_commande lc WHERE lc.id_jean = a.id_jean AND lc.quantite_commande > 0) AS nb_commandes_valides 
             FROM jean a
             JOIN taille t ON a.id_taille = t.id_taille
             JOIN coupe_jean c ON a.id_coupe_jean = c.id_coupe_jean
