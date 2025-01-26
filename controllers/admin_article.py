@@ -17,8 +17,32 @@ admin_article = Blueprint('admin_article', __name__,
 @admin_article.route('/admin/article/show')
 def show_article():
     mycursor = get_db().cursor()
-    sql = '''  requête admin_article_1
-    '''
+    sql = '''
+            SELECT 
+                a.id_jean AS article_id,
+                a.nom_jean AS nom,
+                a.prix_jean AS prix,
+                a.image AS image,
+                a.matiere AS matiere,
+                a.couleur AS couleur,
+                a.descripton AS description,
+                a.fournisseur AS fournisseur,
+                a.marque AS marque,
+                t.nom_taille AS taille,
+                c.nom_coupe AS coupe,
+                e.libelle AS etat,
+                -- Ajout des informations du stock, commentaires et déclinaisons
+                (SELECT COUNT(*) FROM ligne_panier lp WHERE lp.id_jean = a.id_jean) AS nb_panier,  -- Nombre dans le panier de l'utilisateur
+                (SELECT COUNT(*) FROM ligne_commande lc WHERE lc.id_jean = a.id_jean) AS nb_commandes, -- Nombre de fois que l'article a été commandé
+                (SELECT COUNT(*) FROM ligne_commande lc WHERE lc.id_jean = a.id_jean AND lc.quantite_commande > 0) AS nb_commandes_valides -- Nombre de commandes validées (quantité > 0)
+            FROM jean a
+            JOIN taille t ON a.id_taille = t.id_taille
+            JOIN coupe_jean c ON a.id_coupe_jean = c.id_coupe_jean
+            JOIN etat e ON e.id_etat = a.id_coupe_jean  -- Relier les états
+            LEFT JOIN ligne_panier lp ON lp.id_jean = a.id_jean  -- Relier les articles dans le panier
+            LEFT JOIN ligne_commande lc ON lc.id_jean = a.id_jean -- Relier les articles commandés
+            ORDER BY a.nom_jean;  -- Trie les articles par nom (ou vous pouvez utiliser d'autres critères)
+        '''
     mycursor.execute(sql)
     articles = mycursor.fetchall()
     return render_template('admin/article/show_article.html', articles=articles)
