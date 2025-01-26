@@ -7,16 +7,16 @@ def get_db():
     if db is None:
         #
         db = g._database = pymysql.connect(
-            host="localhost",
+            host="thomaslrnz.mysql.pythonanywhere-services.com",
             # host="serveurmysql",
-            user="tlorenzi",
-            password="mdp",
-            database="DB_IUT",
+            user="thomaslrnz",
+            password="password_thomas",
+            database="thomaslrnz$default",
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )
         # à activer sur les machines personnelles :
-#        activate_db_options(db)
+        activate_db_options(db)
     return db
 
 def activate_db_options(db):
