@@ -1,0 +1,29 @@
+# Fichiers et dossiers spécifiques à ignorer
+.env
+.idea/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+connexion_db.py
+app.py
+
+# Dossiers de dépendances
+venv/
+env/
+.vscode/
+
+# Fichiers de configuration IDE
+.idea/
+.vscode/
+
+# Fichiers de test
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Fichiers spécifiques au projet
+truc.sh
+flask_run.sh

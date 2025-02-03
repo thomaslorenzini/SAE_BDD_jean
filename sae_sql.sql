@@ -124,7 +124,15 @@ INSERT INTO jean (id_jean, image, nom_jean, prix_jean, matiere, couleur, descrip
 (3, 'skinny_blanc.webp', 'Jean Skinny Blanc', 59.99, 'Denim', 'Blanc', 'Jean skinny tendance.', 'Levis', 'Levis', 4, 1, 10),
 (4, 'bootcut_bleue.jpg', 'Jean Bootcut Bleu', 45.99, 'Denim', 'Bleu', 'Jean bootcut confortable.', 'Wrangler', 'Wrangler', 3, 4, 10),
 (5, 'relaxed_gris.jpg', 'Jean Relaxed Gris', 55.99, 'Coton', 'Gris', 'Jean relaxed pour un style décontracté.', 'Levis', 'Levis', 5, 5, 10),
-(6, 'regular_beige.webp', 'Jean Regular Beige', 42.99, 'Denim', 'Beige', 'Jean regular en tissu léger.', 'Diesel', 'Diesel', 2, 2, 10);
+(6, 'regular_beige.webp', 'Jean Regular Beige', 42.99, 'Denim', 'Beige', 'Jean regular en tissu léger.', 'Diesel', 'Diesel', 2, 2, 10),
+(7, 'slim_noir.webp', 'Jean Slim Noir', 49.99, 'Denim', 'Noir', 'Jean slim en coton stretch.', 'Levis', 'Levis', 3, 3, 15),
+(8, 'skinny_bleu.jpeg', 'Jean Skinny Bleu', 39.99, 'Denim', 'Bleu', 'Jean skinny avec coupe ajustée.', 'H&M', 'H&M', 5, 2, 20),
+(9, 'jogger_gris.jpeg', 'Jean Jogger Gris', 45.99, 'Denim', 'Gris', 'Jean style jogger avec taille élastique.', 'Zara', 'Zara', 4, 3, 12),
+(10, 'bootcut_blanc.jpeg', 'Jean Bootcut Blanc', 55.99, 'Denim', 'Blanc', 'Jean bootcut classique avec taille haute.', 'Mango', 'Mango', 5, 4, 18),
+(11, 'straight_olive.jpeg', 'Jean Straight Olive', 59.99, 'Denim', 'Olive', 'Jean coupe droite avec finition raffinée.', 'Uniqlo', 'Uniqlo', 5, 5, 25),
+(12, 'momfit_bleu.jpeg', 'Jean Mom Fit Bleu', 42.99, 'Denim', 'Bleu', 'Jean coupe mom avec taille haute et jambes amples.', 'Pull&Bear', 'Pull&Bear', 5, 2, 14),
+(13, 'large_noir.webp', 'Jean Large Noir', 48.99, 'Denim', 'Noir', 'Jean large avec taille haute et jambes fluides.', 'Bershka', 'Bershka', 3, 4, 22),
+(14, 'cargo_marron.jpeg', 'Jean Cargo Marron', 52.99, 'Denim', 'Marron', 'Jean style cargo avec poches latérales.', 'Stradivarius', 'Stradivarius', 2, 3, 30);
 
 INSERT INTO commande (id_commande, date_achat, id_etat, id_utilisateur) VALUES
 (1, '2025-01-01', 1, 1),

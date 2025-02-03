@@ -30,17 +30,13 @@ def show_article():
                 a.marque AS marque,
                 t.nom_taille AS type_article_id,
                 c.nom_coupe AS coupe,
-                e.libelle AS etat,
                 (SELECT COUNT(*) FROM ligne_panier lp WHERE lp.id_jean = a.id_jean) AS nb_panier,  
                 (SELECT COUNT(*) FROM ligne_commande lc WHERE lc.id_jean = a.id_jean) AS nb_commandes,
                 (SELECT COUNT(*) FROM ligne_commande lc WHERE lc.id_jean = a.id_jean AND lc.quantite_commande > 0) AS nb_commandes_valides 
             FROM jean a
             JOIN taille t ON a.id_taille = t.id_taille
             JOIN coupe_jean c ON a.id_coupe_jean = c.id_coupe_jean
-            JOIN etat e ON e.id_etat = a.id_coupe_jean  -- Relier les états
-            LEFT JOIN ligne_panier lp ON lp.id_jean = a.id_jean  -- Relier les articles dans le panier
-            LEFT JOIN ligne_commande lc ON lc.id_jean = a.id_jean -- Relier les articles commandés
-            ORDER BY a.nom_jean;  -- Trie les articles par nom (ou vous pouvez utiliser d'autres critères)
+            ORDER BY a.id_jean ASC; 
         '''
     mycursor.execute(sql)
     articles = mycursor.fetchall()
