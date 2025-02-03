@@ -1,5 +1,4 @@
 # Fichiers et dossiers spécifiques à ignorer
-.env
 .idea/
 __pycache__/
 *.pyc
