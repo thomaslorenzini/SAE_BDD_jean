@@ -15,31 +15,34 @@ def client_article_show():                                 # remplace client_ind
     id_client = session['id_user']
 
     sql = '''
-        SELECT 
-            a.id_jean AS article_id,
-            a.nom_jean AS nom,
-            a.prix_jean AS prix,
-            a.image AS image,
-            a.matiere AS matiere,
-            a.stock AS stock,
-            a.couleur AS couleur,
-            a.descripton AS description,
-            a.fournisseur AS fournisseur,
-            a.marque AS marque,
-            t.nom_taille AS type_article_id,
-            c.nom_coupe AS coupe,
-            e.libelle AS etat
-        FROM jean a
-        JOIN taille t ON a.id_taille = t.id_taille
-        JOIN coupe_jean c ON a.id_coupe_jean = c.id_coupe_jean
-        JOIN ligne_commande lc ON a.id_jean = lc.id_jean
-        JOIN commande cmd ON lc.id_commande = cmd.id_commande
-        JOIN etat e ON cmd.id_etat = e.id_etat
-        '''
+                SELECT 
+                    a.id_jean AS id_article,
+                    a.nom_jean AS nom,
+                    a.prix_jean AS prix,
+                    a.image AS image,
+                    a.stock AS stock,
+                    a.couleur AS couleur,
+                    a.descripton AS description,
+                    a.fournisseur AS fournisseur,
+                    a.marque AS marque,
+                    t.nom_taille AS type_article_id,
+                    c.nom_coupe AS coupe,
+                    (SELECT COUNT(*) FROM ligne_panier lp WHERE lp.id_jean = a.id_jean) AS nb_panier,  
+                    (SELECT COUNT(*) FROM ligne_commande lc WHERE lc.id_jean = a.id_jean) AS nb_commandes,
+                    (SELECT COUNT(*) FROM ligne_commande lc WHERE lc.id_jean = a.id_jean AND lc.quantite_commande > 0) AS nb_commandes_valides 
+                FROM jean a
+                JOIN taille t ON a.id_taille = t.id_taille
+                JOIN coupe_jean c ON a.id_coupe_jean = c.id_coupe_jean
+                ORDER BY a.id_jean ASC; 
+            '''
     list_param = []
     condition_and = ""
     # utilisation du filtre
     sql3=''' prise en compte des commentaires et des notes dans le SQL    '''
+
+
+
+
     articles =[]
     mycursor.execute(sql)
     articles = mycursor.fetchall()
@@ -47,6 +50,15 @@ def client_article_show():                                 # remplace client_ind
 
     # pour le filtre
     types_article = []
+
+
+
+    mycursor.execute("SELECT * FROM coupe_jean")
+    types_article = mycursor.fetchall()
+
+    # ---- Nouveau bloc pour récupérer les tailles ----
+    mycursor.execute("SELECT * FROM taille")
+    items_taille = mycursor.fetchall()
 
 
     articles_panier = []
@@ -61,4 +73,5 @@ def client_article_show():                                 # remplace client_ind
                            , articles_panier=articles_panier
                            #, prix_total=prix_total
                            , items_filtre=types_article
+                           , items_taille=items_taille
                            )

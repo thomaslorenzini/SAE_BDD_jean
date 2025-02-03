@@ -10,6 +10,7 @@ connexion_db.py
 app.py
 
 # Dossiers de dépendances
+.env
 venv/
 env/
 .vscode/
