@@ -120,15 +120,28 @@ def delete_article():
 def edit_article():
     id_article=request.args.get('id_article')
     mycursor = get_db().cursor()
-    sql = '''
-    requête admin_article_6    
-    '''
-    mycursor.execute(sql, id_article)
+    sql = """
+        SELECT 
+            id_jean AS id_article, 
+            nom_jean AS nom, 
+            image, 
+            id_coupe_jean AS type_article_id, 
+            prix_jean AS prix, 
+            descripton AS description,
+            stock
+        FROM jean
+        WHERE id_jean = %s
+        """
+    mycursor.execute(sql, (id_article,))
     article = mycursor.fetchone()
     print(article)
-    sql = '''
-    requête admin_article_7
-    '''
+    sql = """
+        SELECT 
+            id_coupe_jean AS id, 
+            nom_coupe AS libelle
+        FROM coupe_jean
+        ORDER BY nom_coupe
+        """
     mycursor.execute(sql)
     types_article = mycursor.fetchall()
 
@@ -154,9 +167,13 @@ def valid_edit_article():
     type_article_id = request.form.get('type_article_id', '')
     prix = request.form.get('prix', '')
     description = request.form.get('description')
-    sql = '''
-       requête admin_article_8
-       '''
+    stock = request.form.get('stock')
+    sql = """
+        SELECT image
+        FROM jean
+        WHERE id_jean = %s
+        """
+
     mycursor.execute(sql, id_article)
     image_nom = mycursor.fetchone()
     image_nom = image_nom['image']
@@ -170,9 +187,17 @@ def valid_edit_article():
             image.save(os.path.join('static/images/', filename))
             image_nom = filename
 
-    sql = '''  requête admin_article_9 '''
-    mycursor.execute(sql, (nom, image_nom, prix, type_article_id, description, id_article))
-
+    sql = """
+        UPDATE jean
+        SET 
+            nom_jean = %s,
+            image = %s,
+            prix_jean = %s,
+            stock = %s,
+            descripton = %s
+        WHERE id_jean = %s
+        """
+    mycursor.execute(sql, (nom, image_nom, prix, stock, description, id_article))
     get_db().commit()
     if image_nom is None:
         image_nom = ''

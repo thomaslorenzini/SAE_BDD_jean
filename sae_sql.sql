@@ -5,7 +5,9 @@ DROP TABLE IF EXISTS commande;
 DROP TABLE IF EXISTS coupe_jean;
 DROP TABLE IF EXISTS taille;
 DROP TABLE IF EXISTS etat;
+DROP TABLE IF EXISTS adresse;
 DROP TABLE IF EXISTS utilisateur;
+
 
 CREATE TABLE utilisateur
 (
@@ -17,6 +19,18 @@ CREATE TABLE utilisateur
     nom VARCHAR(50),
     est_actif BOOLEAN
 );
+
+CREATE TABLE adresse (
+    id_adresse INT AUTO_INCREMENT PRIMARY KEY,
+    id_utilisateur INT NOT NULL,
+    nom VARCHAR(255) NOT NULL,
+    rue VARCHAR(255) NOT NULL,
+    code_postal VARCHAR(10) NOT NULL,
+    ville VARCHAR(100) NOT NULL,
+    date_utilisation DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur) ON DELETE CASCADE
+);
+
 
 
 INSERT INTO utilisateur(id_utilisateur,login,email,password,role,nom,est_actif) VALUES
@@ -51,10 +65,12 @@ CREATE TABLE coupe_jean(
 );
 
 CREATE TABLE commande(
-   id_commande INT,
+   id_commande INT AUTO_INCREMENT,
    date_achat DATE,
    id_etat INT NOT NULL,
    id_utilisateur INT NOT NULL,
+   id_adresse_livraison INT,
+   id_adresse_facturation INT,
    PRIMARY KEY(id_commande),
    FOREIGN KEY(id_etat) REFERENCES etat(id_etat),
    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id_utilisateur)

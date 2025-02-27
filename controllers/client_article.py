@@ -15,53 +15,90 @@ def client_article_show():                                 # remplace client_ind
     id_client = session['id_user']
 
     sql = '''
-                SELECT 
-                    a.id_jean AS id_article,
-                    a.nom_jean AS nom,
-                    a.prix_jean AS prix,
-                    a.image AS image,
-                    a.stock AS stock,
-                    a.couleur AS couleur,
-                    a.descripton AS description,
-                    a.fournisseur AS fournisseur,
-                    a.marque AS marque,
-                    t.nom_taille AS type_article_id,
-                    c.nom_coupe AS coupe,
-                    (SELECT COUNT(*) FROM ligne_panier lp WHERE lp.id_jean = a.id_jean) AS nb_panier,  
-                    (SELECT COUNT(*) FROM ligne_commande lc WHERE lc.id_jean = a.id_jean) AS nb_commandes,
-                    (SELECT COUNT(*) FROM ligne_commande lc WHERE lc.id_jean = a.id_jean AND lc.quantite_commande > 0) AS nb_commandes_valides 
-                FROM jean a
-                JOIN taille t ON a.id_taille = t.id_taille
-                JOIN coupe_jean c ON a.id_coupe_jean = c.id_coupe_jean
-                ORDER BY a.id_jean ASC; 
-            '''
-    list_param = []
-    condition_and = ""
-    # utilisation du filtre
-    sql3=''' prise en compte des commentaires et des notes dans le SQL    '''
+        SELECT 
+            a.id_jean AS id_article,
+            a.nom_jean AS nom,
+            a.prix_jean AS prix,
+            a.image AS image,
+            a.stock AS stock,
+            a.couleur AS couleur,
+            a.descripton AS description,
+            a.fournisseur AS fournisseur,
+            a.marque AS marque,
+            t.nom_taille AS type_article_id,
+            c.nom_coupe AS coupe,
+            (SELECT COUNT(*) FROM ligne_panier lp WHERE lp.id_jean = a.id_jean) AS nb_panier,  
+            (SELECT COUNT(*) FROM ligne_commande lc WHERE lc.id_jean = a.id_jean) AS nb_commandes,
+            (SELECT COUNT(*) FROM ligne_commande lc WHERE lc.id_jean = a.id_jean AND lc.quantite_commande > 0) AS nb_commandes_valides 
+        FROM jean a
+        JOIN taille t ON a.id_taille = t.id_taille
+        JOIN coupe_jean c ON a.id_coupe_jean = c.id_coupe_jean
+    '''
 
+    params = []
 
+    if session.get('filter_word'):
+        sql += " AND (a.nom_jean LIKE %s OR a.descripton LIKE %s OR a.couleur LIKE %s)"
+        mot = "%" + session['filter_word'] + "%"
+        params.extend([mot, mot, mot])
 
+    if session.get('filter_prix_min'):
+        sql += " AND a.prix_jean >= %s"
+        params.append(session['filter_prix_min'])
 
-    articles =[]
-    mycursor.execute(sql)
+    if session.get('filter_prix_max'):
+        sql += " AND a.prix_jean <= %s"
+        params.append(session['filter_prix_max'])
+
+    if session.get('filter_types'):
+        types = session['filter_types']
+        sql += " AND a.id_coupe_jean IN (" + ", ".join(["%s"] * len(types)) + ")"
+        params.extend(types)
+
+    if session.get('filter_tailles'):
+        tailles = session['filter_tailles']
+        sql += " AND a.id_taille IN (" + ", ".join(["%s"] * len(tailles)) + ")"
+        params.extend(tailles)
+
+    sql += " ORDER BY a.id_jean ASC;"
+
+    mycursor.execute(sql, params)
     articles = mycursor.fetchall()
-
-
-    # pour le filtre
-    types_article = []
-
-
 
     mycursor.execute("SELECT * FROM coupe_jean")
     types_article = mycursor.fetchall()
 
-    # ---- Nouveau bloc pour récupérer les tailles ----
     mycursor.execute("SELECT * FROM taille")
     items_taille = mycursor.fetchall()
 
+    sql_panier = """
+           SELECT 
+               j.id_jean AS id_article,
+               j.nom_jean AS nom,
+               j.prix_jean AS prix,
+               lp.quantite_panier AS quantite,
+               j.stock,
+               1 AS id_declinaison_article,
+               j.couleur AS libelle_couleur,
+               t.nom_taille AS libelle_taille,
+               j.id_taille AS id_taille
+           FROM ligne_panier lp
+           JOIN jean j ON lp.id_jean = j.id_jean
+           LEFT JOIN taille t ON j.id_taille = t.id_taille
+           WHERE lp.id_utilisateur = %s
+       """
+    mycursor.execute(sql_panier, (id_client,))
+    articles_panier = mycursor.fetchall()
 
-    articles_panier = []
+    if articles_panier:
+        sql_total = """
+                SELECT SUM(j.prix_jean * lp.quantite_panier) AS total
+                FROM ligne_panier lp
+                JOIN jean j ON lp.id_jean = j.id_jean
+                WHERE lp.id_utilisateur = %s
+            """
+        mycursor.execute(sql_total, (id_client,))
+
 
     if len(articles_panier) >= 1:
         sql = ''' calcul du prix total du panier '''

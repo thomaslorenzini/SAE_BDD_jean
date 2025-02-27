@@ -20,6 +20,7 @@ def fct_fixtures_load():
     mycursor.execute('DROP TABLE IF EXISTS coupe_jean;')
     mycursor.execute('DROP TABLE IF EXISTS taille;')
     mycursor.execute('DROP TABLE IF EXISTS etat;')
+    mycursor.execute('DROP TABLE IF EXISTS adresse;')
     mycursor.execute('DROP TABLE IF EXISTS utilisateur;')
 
     # Creating the 'utilisateur' table
@@ -33,6 +34,18 @@ def fct_fixtures_load():
         nom VARCHAR(50),
         est_actif BOOLEAN
     );
+    ''')
+    mycursor.execute('''
+    CREATE TABLE adresse (
+    id_adresse INT AUTO_INCREMENT PRIMARY KEY,
+    id_utilisateur INT NOT NULL,
+    nom VARCHAR(255) NOT NULL,
+    rue VARCHAR(255) NOT NULL,
+    code_postal VARCHAR(10) NOT NULL,
+    ville VARCHAR(100) NOT NULL,
+    date_utilisation DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur) ON DELETE CASCADE
+);
     ''')
 
     # Inserting data into 'utilisateur'
@@ -142,6 +155,8 @@ def fct_fixtures_load():
         date_achat DATE,
         id_etat INT NOT NULL,
         id_utilisateur INT NOT NULL,
+        id_adresse_livraison INT,
+        id_adresse_facturation INT,
         FOREIGN KEY(id_etat) REFERENCES etat(id_etat),
         FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id_utilisateur)
     );
