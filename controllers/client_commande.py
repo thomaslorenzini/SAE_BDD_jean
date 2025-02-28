@@ -93,12 +93,14 @@ def client_commande_add():
     sql = '''SELECT last_insert_id() as last_insert_id'''
     # numéro de la dernière commande
 
-    for item in items_ligne_panier:
-        sql_insert_ligne_commande = """
-                INSERT INTO ligne_commande (id_commande, id_jean, prix, quantite_commande)
-                VALUES (%s, %s, %s, %s)
-                """
-        mycursor.execute(sql_insert_ligne_commande, (commande_id, item['id_article'], item['prix'], item['quantite']))
+    sql_insert_ligne_commande = """
+        INSERT INTO ligne_commande (id_commande, id_jean, prix, quantite_commande)
+        SELECT %s, j.id_jean, j.prix_jean, lp.quantite_panier
+        FROM ligne_panier lp
+        JOIN jean j ON lp.id_jean = j.id_jean
+        WHERE lp.id_utilisateur = %s
+    """
+    mycursor.execute(sql_insert_ligne_commande, (commande_id, id_client))
     sql_delete_panier = "DELETE FROM ligne_panier WHERE id_utilisateur = %s"
     mycursor.execute(sql_delete_panier, (id_client,))
     get_db().commit()
