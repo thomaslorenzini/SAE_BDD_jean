@@ -8,6 +8,9 @@ DROP TABLE IF EXISTS etat;
 DROP TABLE IF EXISTS adresse;
 DROP TABLE IF EXISTS utilisateur;
 
+DROP TABLE IF EXISTS commentaires;
+DROP TABLE IF EXISTS notes;
+
 
 CREATE TABLE utilisateur
 (
@@ -113,6 +116,30 @@ CREATE TABLE ligne_panier(
    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id_utilisateur),
    FOREIGN KEY(id_jean) REFERENCES jean(id_jean)
 );
+
+
+CREATE TABLE commentaires (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_utilisateur INT NOT NULL,
+    article_id INT NOT NULL,
+    commentaire TEXT NOT NULL,
+    date_publication TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    valide BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur),
+    FOREIGN KEY (article_id) REFERENCES jean(id_jean)
+);
+
+CREATE TABLE notes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_utilisateur INT NOT NULL,
+    article_id INT NOT NULL,
+    note INT CHECK (note BETWEEN 1 AND 5),
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur),
+    FOREIGN KEY (article_id) REFERENCES jean(id_jean),
+    UNIQUE (id_utilisateur, article_id)
+);
+
+
 
 INSERT INTO etat (id_etat, libelle) VALUES
 (1, 'En attente'),
